@@ -44,9 +44,17 @@ fn main() {
             }),
             LogDiagnosticsPlugin::default(),
             FrameTimeDiagnosticsPlugin,
+            GraphicsPlugin,
         ))
-        .add_systems(Update, (make_visible, toggle_vsync))
         .run();
+}
+
+struct GraphicsPlugin;
+
+impl Plugin for GraphicsPlugin {
+    fn build(&self, app: &mut App) {
+        app.add_systems(Update, (make_visible, toggle_vsync));
+    }
 }
 
 fn make_visible(mut window: Query<&mut Window>, frames: Res<FrameCount>) {
