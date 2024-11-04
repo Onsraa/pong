@@ -10,6 +10,7 @@ const RES: (f32, f32) = (500.0, 500.0);
 #[derive(Component)]
 struct Player(u8);
 
+#[derive(Debug)]
 #[derive(Component)]
 struct Position {
     x: f32,
@@ -46,6 +47,7 @@ fn main() {
             FrameTimeDiagnosticsPlugin,
             GraphicsPlugin,
         ))
+        .add_systems(Startup, (startup_system, show_players).chain())
         .run();
 }
 
@@ -76,7 +78,14 @@ fn toggle_vsync(input: Res<ButtonInput<KeyCode>>, mut windows: Query<&mut Window
     }
 }
 
-fn setup(mut commands: Commands){
+fn startup_system(mut commands: Commands){
     commands.spawn(Camera2dBundle::default());
-    commands.spawn((Player(1), Position {x: 250.0, y: 100.0}, Score(0)));
+    commands.spawn((Player(1), Position {x: RES.0 / 2.0, y: 100.0}, Score(0)));
+    commands.spawn((Player(2), Position {x: RES.0 / 2.0, y: RES.1 - 100.0}, Score(0)));
+}
+
+fn show_players(query: Query<(&Player, &Position, &Score)>){
+    for (player, position, score) in &query {
+        println!("Player : {} | Position : {:?} | {}", player.0, position, score.0);
+    }
 }
