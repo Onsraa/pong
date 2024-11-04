@@ -7,6 +7,23 @@ use bevy::{
 
 const RES: (f32, f32) = (500.0, 500.0);
 
+#[derive(Component)]
+struct Player(u8);
+
+#[derive(Component)]
+struct Position {
+    x: f32,
+    y: f32,
+}
+#[derive(Component)]
+struct Score(u32);
+
+#[derive(Resource)]
+struct GameState {
+    current_round: u8,
+    max_rounds: u8,
+}
+
 fn main() {
     App::new()
         .add_plugins((
@@ -49,4 +66,9 @@ fn toggle_vsync(input: Res<ButtonInput<KeyCode>>, mut windows: Query<&mut Window
         };
         info!("PRESENT MODE : {:?}", window.present_mode)
     }
+}
+
+fn setup(mut commands: Commands){
+    commands.spawn(Camera2dBundle::default());
+    commands.spawn((Player(1), Position {x: 250.0, y: 100.0}, Score(0)));
 }
