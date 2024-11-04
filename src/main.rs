@@ -6,7 +6,7 @@ use bevy::{
 };
 
 const RES: (f32, f32) = (500.0, 500.0);
-
+const MAX_ROUND: u8 = 5;
 #[derive(Component)]
 struct Player(u8);
 
@@ -47,7 +47,7 @@ fn main() {
             FrameTimeDiagnosticsPlugin,
             GraphicsPlugin,
         ))
-        .add_systems(Startup, (startup_system, show_players).chain())
+        .add_systems(Startup, (startup_system, check_startup).chain())
         .run();
 }
 
@@ -80,12 +80,16 @@ fn toggle_vsync(input: Res<ButtonInput<KeyCode>>, mut windows: Query<&mut Window
 
 fn startup_system(mut commands: Commands){
     commands.spawn(Camera2dBundle::default());
+    commands.insert_resource(GameState { current_round: 0, max_rounds: MAX_ROUND });
     commands.spawn((Player(1), Position {x: RES.0 / 2.0, y: 100.0}, Score(0)));
     commands.spawn((Player(2), Position {x: RES.0 / 2.0, y: RES.1 - 100.0}, Score(0)));
 }
 
-fn show_players(query: Query<(&Player, &Position, &Score)>){
+fn check_startup(query: Query<(&Player, &Position, &Score)>, game_state: Res<GameState>){
+    println!("-------------------------------------------------------------");
+    println!("Game state => Current round : {} | Max rounds : {}", game_state.current_round, game_state.max_rounds);
     for (player, position, score) in &query {
         println!("Player : {} | Position : {:?} | {}", player.0, position, score.0);
     }
+    println!("-------------------------------------------------------------");
 }
